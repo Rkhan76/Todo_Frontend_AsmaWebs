@@ -6,10 +6,13 @@ const AuthContext = createContext()
 export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
   const [isAuth, setIsAuth] = useState(false)
+ const [user, setUser] = useState(null)
 
   const checkAuth = async () => {
     try {
-      await axiosConfig.get('/auth/me')
+      const res = await axiosConfig.get('/auth/me')
+      
+       setUser(res.data.user)
       setIsAuth(true)
     } catch {
       setIsAuth(false)
@@ -22,6 +25,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await axiosConfig.post('/auth/logout')
     } finally {
+      setUser(null)  
       setIsAuth(false)
     }
   }
@@ -35,6 +39,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         isAuth,
         loading,
+        user,
         logout,
         checkAuth, // ✅ NOW AVAILABLE
       }}
